@@ -23,3 +23,23 @@ pub fn run(input: String) -> (String, String) {
 
     (format!("{p1sum}"), format!("{p2sum}"))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use indoc::indoc;
+
+    const INPUT: &str = indoc! {"
+            3   4
+            4   3
+            2   5
+            1   3
+            3   9
+            3   3
+        "};
+
+    #[test]
+    fn works() {
+        assert_eq!(run(INPUT.to_owned()), ("11".to_owned(), "31".to_owned()));
+    }
+}

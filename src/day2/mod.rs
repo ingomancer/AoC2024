@@ -60,25 +60,11 @@ pub fn run(input: String) -> (String, String) {
                     vec3.remove(index - 2);
                 }
 
-                match strictly_monotonic_with_max_change(&vec1, max_change) {
-                    Ok(_) => {
-                        safe_reports_2 += 1;
-                        continue;
-                    }
-                    Err(_) => (),
-                }
-                match strictly_monotonic_with_max_change(&vec2, max_change) {
-                    Ok(_) => {
-                        safe_reports_2 += 1;
-                        continue;
-                    }
-                    Err(_) => (),
-                }
-                match strictly_monotonic_with_max_change(&vec3, max_change) {
-                    Ok(_) => {
-                        safe_reports_2 += 1;
-                    }
-                    Err(_) => (),
+                if strictly_monotonic_with_max_change(&vec1, max_change).is_ok()
+                    || strictly_monotonic_with_max_change(&vec2, max_change).is_ok()
+                    || strictly_monotonic_with_max_change(&vec3, max_change).is_ok()
+                {
+                    safe_reports_2 += 1;
                 }
             }
         }
@@ -88,4 +74,24 @@ pub fn run(input: String) -> (String, String) {
         format!("{safe_reports}"),
         format!("{}", safe_reports + safe_reports_2),
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use indoc::indoc;
+
+    const INPUT: &str = indoc! {"
+            7 6 4 2 1
+            1 2 7 8 9
+            9 7 6 2 1
+            1 3 2 4 5
+            8 6 4 4 1
+            1 3 6 7 9
+        "};
+
+    #[test]
+    fn works() {
+        assert_eq!(run(INPUT.to_owned()), ("2".to_owned(), "4".to_owned()));
+    }
 }
