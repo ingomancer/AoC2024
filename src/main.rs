@@ -1,6 +1,7 @@
 use std::{error::Error, fs, path::Path, time::Instant};
 
 mod day1;
+mod day2;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let day: i32 = std::env::args()
@@ -30,6 +31,7 @@ fn run_day(day: i32, print: bool) -> Result<(), Box<dyn Error>> {
 
     let day_func = match day {
         1 => day1::run,
+        2 => day2::run,
 
         _ => unknown_day,
     };
