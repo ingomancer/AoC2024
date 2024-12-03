@@ -5,4 +5,5 @@ edition = "2021"
 
 [dependencies]
 indoc = "2.0.5"
+regex = "1.11.1"
 sorted-vec = "0.8.5"
