@@ -11,32 +11,34 @@ enum GuardDirection {
 }
 
 pub fn run(input: String) -> (String, String) {
-    let mut grid: HashMap<(usize, usize), char> = HashMap::new();
+    let dimension = input.lines().next().unwrap().len();
+    let mut grid: Vec<char> = vec!['.'; dimension * dimension];
     let mut guard = ((0, 0), GuardDirection::Up);
     for (x, line) in input.lines().enumerate() {
         for (y, char) in line.trim().chars().enumerate() {
-            grid.insert((x, y), char);
-            if char == '^' {
-                guard = ((x, y), GuardDirection::Up);
+            if char == '#' {
+                grid[x + y * dimension] = char;
+            } else if char == '^' {
+                guard.0 = (x, y);
             }
         }
     }
 
-    let visited = steps_to_exit(&grid, guard).unwrap();
+    let visited = steps_to_exit(&grid, dimension, guard).unwrap();
 
     let p2pos: u32 = visited
         .iter()
         .par_bridge()
         .map(|position| {
             let mut new_grid = grid.clone();
-            *new_grid.get_mut(position.0).unwrap() = '#';
+            new_grid[position.0 .0 + position.0 .1 * dimension] = '#';
             let start = match position.1[0] {
                 GuardDirection::Up => (position.0 .0 + 1, position.0 .1),
                 GuardDirection::Down => (position.0 .0 - 1, position.0 .1),
                 GuardDirection::Left => (position.0 .0, position.0 .1 + 1),
                 GuardDirection::Right => (position.0 .0, position.0 .1 - 1),
             };
-            if steps_to_exit(&new_grid, (start, position.1[0])).is_none() {
+            if steps_to_exit(&new_grid, dimension, (start, position.1[0])).is_none() {
                 1
             } else {
                 0
@@ -48,49 +50,59 @@ pub fn run(input: String) -> (String, String) {
 }
 
 fn steps_to_exit(
-    grid: &HashMap<(usize, usize), char>,
+    grid: &[char],
+    dimension: usize,
     initial_position: ((usize, usize), GuardDirection),
 ) -> Option<HashMap<(usize, usize), Vec<GuardDirection>>> {
     let mut guard = initial_position;
     let mut visited: HashMap<(usize, usize), Vec<GuardDirection>> = HashMap::new();
-    while grid.contains_key(&guard.0) {
+    loop {
         if let Some(pos) = visited.get(&guard.0) {
             if pos.contains(&guard.1) {
                 return None;
             }
         }
+        if guard.0 .0 == dimension || guard.0 .1 == dimension {
+            break;
+        }
         visited.entry(guard.0).or_default().push(guard.1);
         match guard.1 {
             GuardDirection::Up => {
-                let next = (guard.0 .0.wrapping_sub(1), guard.0 .1);
-                if let Some('#') = grid.get(&next) {
+                if guard.0 .0 == 0 {
+                    break;
+                }
+                let (x, y) = (guard.0 .0 - 1, guard.0 .1);
+                if let Some('#') = grid.get(x + y * dimension) {
                     guard.1 = GuardDirection::Right;
                 } else {
-                    guard.0 = next;
-                }
+                    guard.0 = (x, y);
+                };
             }
             GuardDirection::Down => {
-                let next = (guard.0 .0 + 1, guard.0 .1);
-                if let Some('#') = grid.get(&next) {
+                let (x, y) = (guard.0 .0 + 1, guard.0 .1);
+                if let Some('#') = grid.get(x + y * dimension) {
                     guard.1 = GuardDirection::Left;
                 } else {
-                    guard.0 = next;
+                    guard.0 = (x, y);
                 }
             }
             GuardDirection::Left => {
-                let next = (guard.0 .0, guard.0 .1.wrapping_sub(1));
-                if let Some('#') = grid.get(&next) {
+                if guard.0 .1 == 0 {
+                    break;
+                }
+                let (x, y) = (guard.0 .0, guard.0 .1 - 1);
+                if let Some('#') = grid.get(x + y * dimension) {
                     guard.1 = GuardDirection::Up;
                 } else {
-                    guard.0 = next;
-                }
+                    guard.0 = (x, y);
+                };
             }
             GuardDirection::Right => {
-                let next = (guard.0 .0, guard.0 .1 + 1);
-                if let Some('#') = grid.get(&next) {
+                let (x, y) = (guard.0 .0, guard.0 .1 + 1);
+                if let Some('#') = grid.get(x + y * dimension) {
                     guard.1 = GuardDirection::Down;
                 } else {
-                    guard.0 = next;
+                    guard.0 = (x, y);
                 }
             }
         }
