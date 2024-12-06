@@ -33,7 +33,7 @@ pub fn run(input: String) -> (String, String) {
         .map(|position| {
             let mut new_grid = grid.clone();
             *new_grid.get_mut(position).unwrap() = '#';
-            if let None = steps_to_exit(&new_grid, guard) {
+            if steps_to_exit(&new_grid, guard).is_none() {
                 1
             } else {
                 0
@@ -92,7 +92,7 @@ fn steps_to_exit(
             }
         }
     }
-    return Some(visited);
+    Some(visited)
 }
 
 #[cfg(test)]
