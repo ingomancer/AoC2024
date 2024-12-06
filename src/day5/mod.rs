@@ -29,19 +29,9 @@ pub fn run(input: String) -> (String, String) {
 }
 
 fn precedence_order(a: &str, b: &str, precedes: &HashMap<&str, HashSet<&str>>) -> Ordering {
-    if precedes
-        .get(a)
-        .or(Some(&HashSet::new()))
-        .unwrap()
-        .contains(b)
-    {
+    if precedes.get(a).unwrap_or(&HashSet::new()).contains(b) {
         Ordering::Less
-    } else if precedes
-        .get(b)
-        .or(Some(&HashSet::new()))
-        .unwrap()
-        .contains(a)
-    {
+    } else if precedes.get(b).unwrap_or(&HashSet::new()).contains(a) {
         Ordering::Greater
     } else {
         Ordering::Equal
