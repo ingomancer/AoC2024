@@ -1,7 +1,4 @@
-use std::{
-    char,
-    collections::{HashMap, HashSet},
-};
+use std::{char, collections::HashMap};
 
 use rayon::iter::{ParallelBridge, ParallelIterator};
 
@@ -28,12 +25,18 @@ pub fn run(input: String) -> (String, String) {
     let visited = steps_to_exit(&grid, guard).unwrap();
 
     let p2pos: u32 = visited
-        .keys()
+        .iter()
         .par_bridge()
         .map(|position| {
             let mut new_grid = grid.clone();
-            *new_grid.get_mut(position).unwrap() = '#';
-            if steps_to_exit(&new_grid, guard).is_none() {
+            *new_grid.get_mut(position.0).unwrap() = '#';
+            let start = match position.1[0] {
+                GuardDirection::Up => (position.0 .0 + 1, position.0 .1),
+                GuardDirection::Down => (position.0 .0 - 1, position.0 .1),
+                GuardDirection::Left => (position.0 .0, position.0 .1 + 1),
+                GuardDirection::Right => (position.0 .0, position.0 .1 - 1),
+            };
+            if steps_to_exit(&new_grid, (start, position.1[0])).is_none() {
                 1
             } else {
                 0
@@ -47,16 +50,16 @@ pub fn run(input: String) -> (String, String) {
 fn steps_to_exit(
     grid: &HashMap<(usize, usize), char>,
     initial_position: ((usize, usize), GuardDirection),
-) -> Option<HashMap<(usize, usize), HashSet<GuardDirection>>> {
+) -> Option<HashMap<(usize, usize), Vec<GuardDirection>>> {
     let mut guard = initial_position;
-    let mut visited: HashMap<(usize, usize), HashSet<GuardDirection>> = HashMap::new();
+    let mut visited: HashMap<(usize, usize), Vec<GuardDirection>> = HashMap::new();
     while grid.contains_key(&guard.0) {
         if let Some(pos) = visited.get(&guard.0) {
             if pos.contains(&guard.1) {
                 return None;
             }
         }
-        visited.entry(guard.0).or_default().insert(guard.1);
+        visited.entry(guard.0).or_default().push(guard.1);
         match guard.1 {
             GuardDirection::Up => {
                 let next = (guard.0 .0.wrapping_sub(1), guard.0 .1);
