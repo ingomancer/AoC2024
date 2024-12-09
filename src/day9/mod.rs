@@ -1,5 +1,3 @@
-use std::usize;
-
 pub fn run(input: String) -> (String, String) {
     let mut fs = vec![];
     let mut block_id = 0;
@@ -44,12 +42,16 @@ pub fn run(input: String) -> (String, String) {
                 prev_amount += 1;
             } else if prev != usize::MAX {
                 let pos = find_empty_block(&p2compacted_fs, prev_amount, prev_index);
-                if !(pos == usize::MAX) {
-                    for j in pos..(pos + prev_amount) {
-                        p2compacted_fs[j] = Some(prev);
+                if pos != usize::MAX {
+                    for new_pos in p2compacted_fs.iter_mut().skip(pos).take(prev_amount) {
+                        *new_pos = Some(prev);
                     }
-                    for k in (prev_index - prev_amount + 1)..(prev_index + 1) {
-                        p2compacted_fs[k] = None;
+                    for old_pos in p2compacted_fs
+                        .iter_mut()
+                        .take(prev_index + 1)
+                        .skip(prev_index - prev_amount + 1)
+                    {
+                        *old_pos = None;
                     }
                 }
                 prev = *file;
