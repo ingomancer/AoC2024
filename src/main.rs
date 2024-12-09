@@ -8,6 +8,7 @@ mod day5;
 mod day6;
 mod day7;
 mod day8;
+mod day9;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let day: i32 = std::env::args()
@@ -17,7 +18,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .unwrap_or(-1);
     if day == -1 {
         let now = Instant::now();
-        for i in 1..=7 {
+        for i in 1..=9 {
             run_day(i, false)?;
         }
         println!("{}", now.elapsed().as_secs_f32());
@@ -44,6 +45,7 @@ fn run_day(day: i32, print: bool) -> Result<(), Box<dyn Error>> {
         6 => day6::run,
         7 => day7::run,
         8 => day8::run,
+        9 => day9::run,
         _ => unknown_day,
     };
     let now = Instant::now();
