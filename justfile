@@ -9,3 +9,6 @@ run day:
 
 fast day:
     cargo run --release {{day}}
+
+init day:
+    cp -r src/dayN src/day{{day}}
