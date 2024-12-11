@@ -12,3 +12,6 @@ fast day:
 
 init day:
     cp -r src/dayN src/day{{day}}
+
+fix:
+    cargo clippy --fix --allow-dirty
