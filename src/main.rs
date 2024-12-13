@@ -4,6 +4,7 @@ mod day1;
 mod day10;
 mod day11;
 mod day12;
+mod day13;
 mod day2;
 mod day3;
 mod day4;
@@ -21,7 +22,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .unwrap_or(-1);
     if day == -1 {
         let now = Instant::now();
-        for i in 1..=12 {
+        for i in 1..=13 {
             run_day(i, false)?;
         }
         println!("{}", now.elapsed().as_secs_f32());
@@ -52,6 +53,7 @@ fn run_day(day: i32, print: bool) -> Result<(), Box<dyn Error>> {
         10 => day10::run,
         11 => day11::run,
         12 => day12::run,
+        13 => day13::run,
         _ => unknown_day,
     };
     let now = Instant::now();
