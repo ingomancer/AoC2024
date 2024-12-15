@@ -114,6 +114,6 @@ p=9,5 v=-3,-3
 
     #[test]
     fn works() {
-        assert_eq!(run(INPUT.to_owned()), ("12".to_owned(), "".to_owned()));
+        assert_eq!(run(INPUT.to_owned()), ("12".to_owned(), "1".to_owned()));
     }
 }
